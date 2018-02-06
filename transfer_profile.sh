@@ -38,6 +38,8 @@ for i in ${srv_array[@]} ; do
 	## Ubuntu based systems require a .profile file in the home directory
 	## This does a check to see what distro is installed. 
 	ssh "${user}"@"${i}" "cat /etc/*release" | grep -q Ubuntu && scp -p profile "${user}"@"${i}":~/.profile
+	## CentOS systems use a .bash_profile file in the home directory
+	ssh "${user}"@"${i}" "cat /etc/*release" | grep -q CentOS && scp -p profile "${user}"@"${i}":~/.bash_profile
 
 	echo -e "--------------\n"
 done
