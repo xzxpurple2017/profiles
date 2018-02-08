@@ -36,7 +36,7 @@ if [[ -z $user ]] && [[ -z ${srv_array[@]} ]] ; then
 	die 1 "Please enter required arguments.\n ${USAGE}"
 fi
 
-echo -e "\ni--------------"
+echo -e "\n--------------"
 
 for i in ${srv_array[@]} ; do
 	echo -e "## $i"
