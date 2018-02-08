@@ -11,7 +11,8 @@ It works on Ubuntu and CentOS systems.
 
 Usage:
 
-```bob@ubuntu-vm1 ~ $ ./transfer_profile.sh
+```
+bob@ubuntu-vm1 ~ $ ./transfer_profile.sh
 Please enter required arguments.
 
 Usage:  -s SRV[,SRV[,...]] -u USERNAME [-r]
