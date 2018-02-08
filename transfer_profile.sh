@@ -44,14 +44,14 @@ for i in ${srv_array[@]} ; do
 	if [ "${i}" = "localhost" ] ; then
 		echo "## Copying profiles locally"
 		## If localhost, just copy files in user home
-		$sudo_flag cp -p bashrc /home/${user}/.bashrc
-		$sudo_flag cp -p bash_aliases /home/${user}/.bash_aliases
-		$sudo_flag cp -p bash_functions /home/${user}/.bash_functions
-		$sudo_flag cp -p vimrc /home/${user}/.vimrc
-		$sudo_flag cp -p inputrc /home/${user}/.inputrc
-		$sudo_flag cp -p screenrc /home/${user}/.screenrc
-		cat /etc/*release | grep -q Ubuntu && $sudo_flag cp -p profile /home/${user}/.profile
-		cat /etc/*release | grep -q CentOS && $sudo_flag cp -p profile /home/${user}/.bash_profile
+		$sudo_flag cp -p bashrc /home/${user}/.bashrc && echo bashrc
+		$sudo_flag cp -p bash_aliases /home/${user}/.bash_aliases && echo bash_aliases
+		$sudo_flag cp -p bash_functions /home/${user}/.bash_functions && echo bash_functions
+		$sudo_flag cp -p vimrc /home/${user}/.vimrc && echo vimrc
+		$sudo_flag cp -p inputrc /home/${user}/.inputrc && echo inputrc
+		$sudo_flag cp -p screenrc /home/${user}/.screenrc && echo screenrc
+		cat /etc/*release | grep -q Ubuntu && $sudo_flag cp -p profile /home/${user}/.profile && echo profile
+		cat /etc/*release | grep -q CentOS && $sudo_flag cp -p profile /home/${user}/.bash_profile && echo bash_profile
 	else
 
 		## First, test if SSH connection is even possible with the user provided
