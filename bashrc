@@ -59,8 +59,25 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+determine_git_changes() {
+	git diff --exit-code >/dev/null 2>&1
+	ret1=$?
+	git diff --exit-code --cached >/dev/null 2>&1
+	ret2=$?
+	if [[ $ret1 -eq 1 ]] || [[ $ret2 -eq 1 ]] ; then
+		echo 31 # red text
+	else
+		echo 32 # green text
+	fi
+}
+
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\] \[\033[01;34m\]\w \$\[\033[00m\] '
+    #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\] \[\033[01;34m\]\w \$\[\033[00m\] '
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\] \[\033[01;34m\]\w\[\033[00;$(determine_git_changes)m\]$(parse_git_branch) \[\033[01;34m\]\$\[\033[00m\] '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
