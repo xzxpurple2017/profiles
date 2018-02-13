@@ -65,8 +65,9 @@ parse_git_branch() {
 
 determine_git_changes() {
 	git_color=32   # Green text
-	git remote update >/dev/null 2>&1
-	git status -uno 2> /dev/null | grep -q 'Your branch is behind' && git_color=35
+	## Good idea but this is too slow for prompt
+	#git remote update >/dev/null 2>&1
+	#git status -uno 2> /dev/null | grep -q 'Your branch is behind' && git_color=35
 	[[ -z $(git status -uno --porcelain 2> /dev/null) ]] ||	git_color=31   # Red text
 	echo $git_color
 }
