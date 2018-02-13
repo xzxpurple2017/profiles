@@ -50,8 +50,9 @@ for i in ${srv_array[@]} ; do
 		$sudo_flag cp -p vimrc /home/${user}/.vimrc && echo vimrc
 		$sudo_flag cp -p inputrc /home/${user}/.inputrc && echo inputrc
 		$sudo_flag cp -p screenrc /home/${user}/.screenrc && echo screenrc
-		cat /etc/*release | grep -q Ubuntu && $sudo_flag cp -p profile /home/${user}/.profile && echo profile
-		cat /etc/*release | grep -q CentOS && $sudo_flag cp -p profile /home/${user}/.bash_profile && echo bash_profile
+		cat /etc/*release | grep -q Ubuntu && $sudo_flag cp -p profile /home/${user}/.profile && source /home/${user}/.profile && echo profile
+		cat /etc/*release | grep -q CentOS && $sudo_flag cp -p profile /home/${user}/.bash_profile && source /home/${user}/.bash_profile && echo bash_profile
+		source /home/${user}/.bashrc  
 	else
 
 		## First, test if SSH connection is even possible with the user provided

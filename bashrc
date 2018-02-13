@@ -64,15 +64,9 @@ parse_git_branch() {
 }
 
 determine_git_changes() {
-	git diff --exit-code >/dev/null 2>&1
-	ret1=$?
-	git diff --exit-code --cached >/dev/null 2>&1
-	ret2=$?
-	if [[ $ret1 -eq 1 ]] || [[ $ret2 -eq 1 ]] ; then
-		echo 31 # red text
-	else
-		echo 32 # green text
-	fi
+	git_color=32   # Green text
+	[[ -z $(git status -uno --porcelain 2> /dev/null) ]] ||	git_color=31   # Red text
+	echo $git_color
 }
 
 if [ "$color_prompt" = yes ]; then
