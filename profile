@@ -7,6 +7,6 @@ fi
 
 # User specific environment and startup programs
 
-PATH=$PATH:$HOME/.local/bin:$HOME/bin:/sbin/:/usr/local/sbin:/usr/sbin
+PATH=$PATH:$HOME/.local/bin:$HOME/bin:/sbin/:/usr/local/sbin:/usr/sbin:$EC2_HOME/bin
 
 export PATH

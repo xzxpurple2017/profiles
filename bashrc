@@ -136,3 +136,7 @@ if [[ -S "$SSH_AUTH_SOCK" && ! -h "$SSH_AUTH_SOCK" ]]; then
     ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock;
 fi
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock;
+
+# AWS EC2 tools
+export EC2_BASE=/opt/ec2
+export EC2_HOME=$EC2_BASE/tools
