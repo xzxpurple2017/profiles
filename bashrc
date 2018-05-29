@@ -140,3 +140,35 @@ export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock;
 # AWS EC2 tools
 export EC2_BASE=/opt/ec2
 export EC2_HOME=$EC2_BASE/tools
+
+## SSH agent settings
+#SSH_ENV="$HOME/.ssh/environment"
+#
+#function start_agent {
+#    echo "Initialising new SSH agent..."
+#    /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+#    echo succeeded
+#    chmod 600 "${SSH_ENV}"
+#    . "${SSH_ENV}" > /dev/null
+#    /usr/bin/ssh-add;
+#        # loop to add SSH private keys
+#    for f in ~/.ssh/* ; do
+#        file_type=$( file $f )
+#        matching_str="private key"
+#        if [[ "$file_type" =~ "$matching_str" ]] ; then
+#            ssh-add "$f"
+#        fi
+#    done
+#}
+#
+## Source SSH settings, if applicable
+#
+#if [ -f "${SSH_ENV}" ]; then
+#    . "${SSH_ENV}" > /dev/null
+#    #ps ${SSH_AGENT_PID} doesn't work under cywgin
+#    ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+#        start_agent;
+#    }
+#else
+#    start_agent;
+#fi
