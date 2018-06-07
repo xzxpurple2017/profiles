@@ -141,6 +141,65 @@ export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock;
 export EC2_BASE=/opt/ec2
 export EC2_HOME=$EC2_BASE/tools
 
+# GPG config  ------------------------------------------------------------
+#
+# Check if running Ubuntu with Systemd
+# If it is, check if 'pcscd' process is running
+# If not running, alert user to restart it using 'sudo'
+declare -a gpg_err_msg=()
+
+hostnamectl | grep -oP 'Operating System: Ubuntu 1[6789]\..*' -q
+ret=$?
+if [[ $ret -eq 0 ]] ; then
+  systemctl is-active --quiet pcscd
+  ret=$?
+  if [[ $ret -ne 0 ]] ; then
+  	msg="'pcscd' is not running. Please start via systemctl as root."
+	gpg_err_msg+=("${msg}")
+  fi
+fi
+
+# Check if agent is running
+if ! pgrep -x gpg-agent > /dev/null 2>&1 ; then
+  rm ${HOME}/.gnupg/S.gpg-agent
+  rm -rf /var/run/user/1000/gnupg/
+fi
+
+# GPG config
+envfile="${HOME}/.gnupg/gpg-agent.env"
+if ( [[ ! -e "${HOME}/.gnupg/S.gpg-agent" ]] && \
+     [[ ! -e "/var/run/user/$(id -u)/gnupg/S.gpg-agent" ]] );
+then
+  killall pinentry > /dev/null 2>&1
+  gpgconf --reload scdaemon > /dev/null 2>&1
+  ret=$?
+  if [[ $ret -ne 0 ]] ; then
+  	msg="Could not gpgconf reload the scdaemon"
+	gpg_err_msg+=("${msg}")
+  fi
+  pkill -x -INT gpg-agent > /dev/null 2>&1
+  gpg-agent --daemon --enable-ssh-support > ${envfile}
+  ret=$?
+  if [[ $ret -ne 0 ]] ; then
+    msg="Could not use gpg-agent to enable SSH support"
+	gpg_err_msg+=("${msg}")
+  fi
+  echo "Configured Yubikey to integrate with SSH agent"
+fi
+
+# Wake up smartcard to avoid races
+gpg --card-status > /dev/null 2>&1
+
+source "${envfile}"
+
+# Output any errors while trying to configure GPG and Yubikey
+if [[ -n ${gpg_err_msg[@]} ]] ; then
+  for e in ${gpg_err_msg[@]} ; do
+  	echo "# ERROR -- ${e}"
+  done
+fi
+# ----------------------------------------------------------------------
+#
 ## SSH agent settings
 #SSH_ENV="$HOME/.ssh/environment"
 #
