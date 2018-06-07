@@ -190,6 +190,11 @@ fi
 
 # Wake up smartcard to avoid races
 gpg --card-status > /dev/null 2>&1
+ret=$?
+if [[ $ret -ne 0 ]] ; then
+  msg="Could not get Yubikey status. Perhaps restart 'pcscd' service"
+  gpg_err_msg+=("${msg}")
+fi
 
 source "${envfile}"
 
