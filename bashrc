@@ -185,6 +185,7 @@ then
 	gpg_err_msg+=("${msg}")
   fi
   echo "Configured Yubikey to integrate with SSH agent"
+  [[ -z ${gpg_err_msg[@]} ]] || echo -e "WARN: some errors\n"
 fi
 
 # Wake up smartcard to avoid races
