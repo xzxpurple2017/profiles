@@ -159,50 +159,53 @@ if [[ $ret -eq 0 ]] ; then
   fi
 fi
 
-# Check if agent is running
-if ! pgrep -x gpg-agent > /dev/null 2>&1 ; then
-  rm ${HOME}/.gnupg/S.gpg-agent
-  rm -rf /var/run/user/1000/gnupg/
-fi
-
 # GPG config
-envfile="${HOME}/.gnupg/gpg-agent.env"
-if ( [[ ! -e "${HOME}/.gnupg/S.gpg-agent" ]] && \
-     [[ ! -e "/var/run/user/$(id -u)/gnupg/S.gpg-agent" ]] );
-then
-  killall pinentry > /dev/null 2>&1
-  gpgconf --reload scdaemon > /dev/null 2>&1
+# Change to 'yes' if you have a laptop or desktop with a Yubikey
+yubikey='no'
+if [[ "$yubikey" = "yes" ]] ; then
+  # Check if agent is running
+  if ! pgrep -x gpg-agent > /dev/null 2>&1 ; then
+    rm ${HOME}/.gnupg/S.gpg-agent
+    rm -rf /var/run/user/1000/gnupg/
+  fi
+  envfile="${HOME}/.gnupg/gpg-agent.env"
+  if ( [[ ! -e "${HOME}/.gnupg/S.gpg-agent" ]] && \
+       [[ ! -e "/var/run/user/$(id -u)/gnupg/S.gpg-agent" ]] );
+  then
+    killall pinentry > /dev/null 2>&1
+    gpgconf --reload scdaemon > /dev/null 2>&1
+    ret=$?
+    if [[ $ret -ne 0 ]] ; then
+    	msg="Could not gpgconf reload the scdaemon"
+  	gpg_err_msg+=("${msg}")
+    fi
+    pkill -x -INT gpg-agent > /dev/null 2>&1
+    gpg-agent --daemon --enable-ssh-support > ${envfile}
+    ret=$?
+    if [[ $ret -ne 0 ]] ; then
+      msg="Could not use gpg-agent to enable SSH support"
+  	gpg_err_msg+=("${msg}")
+    fi
+    echo "Configured Yubikey to integrate with SSH agent"
+    [[ -z ${gpg_err_msg[@]} ]] || echo -e "WARN: some errors\n"
+  fi
+  
+  # Wake up smartcard to avoid races
+  gpg --card-status > /dev/null 2>&1
   ret=$?
   if [[ $ret -ne 0 ]] ; then
-  	msg="Could not gpgconf reload the scdaemon"
-	gpg_err_msg+=("${msg}")
+    msg="Could not get Yubikey status. Perhaps restart 'pcscd' service"
+    gpg_err_msg+=("${msg}")
   fi
-  pkill -x -INT gpg-agent > /dev/null 2>&1
-  gpg-agent --daemon --enable-ssh-support > ${envfile}
-  ret=$?
-  if [[ $ret -ne 0 ]] ; then
-    msg="Could not use gpg-agent to enable SSH support"
-	gpg_err_msg+=("${msg}")
+  
+  source "${envfile}"
+  
+  # Output any errors while trying to configure GPG and Yubikey
+  if [[ -n ${gpg_err_msg[@]} ]] ; then
+    for e in "${gpg_err_msg[@]}" ; do
+    	echo "# ERROR -- ${e}"
+    done
   fi
-  echo "Configured Yubikey to integrate with SSH agent"
-  [[ -z ${gpg_err_msg[@]} ]] || echo -e "WARN: some errors\n"
-fi
-
-# Wake up smartcard to avoid races
-gpg --card-status > /dev/null 2>&1
-ret=$?
-if [[ $ret -ne 0 ]] ; then
-  msg="Could not get Yubikey status. Perhaps restart 'pcscd' service"
-  gpg_err_msg+=("${msg}")
-fi
-
-source "${envfile}"
-
-# Output any errors while trying to configure GPG and Yubikey
-if [[ -n ${gpg_err_msg[@]} ]] ; then
-  for e in ${gpg_err_msg[@]} ; do
-  	echo "# ERROR -- ${e}"
-  done
 fi
 # ----------------------------------------------------------------------
 #
