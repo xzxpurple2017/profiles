@@ -161,11 +161,13 @@ fi
 
 # GPG config
 # Change to 'yes' if you have a laptop or desktop with a Yubikey
+# NOTE: On Ubuntu 18.04, pcscd systemd unit file does not work and requires 
+# a modification to start up automatically
 yubikey='no'
 if [[ "$yubikey" = "yes" ]] ; then
   # Check if agent is running
   if ! pgrep -x gpg-agent > /dev/null 2>&1 ; then
-    rm ${HOME}/.gnupg/S.gpg-agent
+    rm -rf ${HOME}/.gnupg/S.gpg-agent
     rm -rf /var/run/user/1000/gnupg/
   fi
   envfile="${HOME}/.gnupg/gpg-agent.env"
@@ -240,3 +242,6 @@ fi
 #else
 #    start_agent;
 #fi
+
+# Clear the screen
+clear
