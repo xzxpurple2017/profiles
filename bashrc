@@ -242,6 +242,3 @@ fi
 #else
 #    start_agent;
 #fi
-
-# Clear the screen
-clear
