@@ -210,6 +210,24 @@ if [[ "$yubikey" = "yes" ]] ; then
   fi
 fi
 # ----------------------------------------------------------------------
+# Xclip settings to make it behave like pbcopy
+if [[ -f /tmp/.xclipinstalled ]] ; then
+	alias pbcopy='xclip -selection clipboard'
+	alias pbpaste='xclip -selection clipboard -o'
+else
+	cat /etc/*release | grep -q Ubuntu
+	ret=$?
+	if [[ $ret -eq 0 ]] ; then
+		dpkg -l | grep -q xclip >/dev/null 2>&1
+		ret=$?
+		if [[ $ret -eq 0 ]] ; then
+			touch /tmp/.xclipinstalled
+			alias pbcopy='xclip -selection clipboard'
+			alias pbpaste='xclip -selection clipboard -o'
+		fi
+	fi
+fi
+# ----------------------------------------------------------------------
 #
 ## SSH agent settings
 #SSH_ENV="$HOME/.ssh/environment"
