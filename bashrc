@@ -161,9 +161,19 @@ fi
 
 # GPG config
 # Change to 'yes' if you have a laptop or desktop with a Yubikey
+# You can also toggle to dynamically detect the Yubikey
 # NOTE: On Ubuntu 18.04, pcscd systemd unit file does not work and requires 
 # a modification to start up automatically
 yubikey='no'
+check_for_card='yes'
+if [[ "$check_for_card" = "yes" ]] ; then
+  gpg --card-status > /dev/null 2>&1
+  ret=$?
+  if [[ $ret -eq 0 ]] ; then
+  	yubikey='yes'
+  fi
+fi
+
 if [[ "$yubikey" = "yes" ]] ; then
   # Check if agent is running
   if ! pgrep -x gpg-agent > /dev/null 2>&1 ; then
