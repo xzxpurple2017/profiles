@@ -148,7 +148,7 @@ export EC2_HOME=$EC2_BASE/tools
 # If not running, alert user to restart it using 'sudo'
 declare -a gpg_err_msg=()
 
-hostnamectl | grep -oP 'Operating System: Ubuntu 1[6789]\..*' -q
+hostnamectl 2>/dev/null | grep -oP 'Operating System: Ubuntu 1[6789]\..*' -q
 ret=$?
 if [[ $ret -eq 0 ]] ; then
   systemctl is-active --quiet pcscd
